@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: multitenant-demo
+#  datasource:
+#    username: postgres
+#    password: saif12345
+#    url: jdbc:postgresql://localhost:5432/postgres  # Ensure 'localhost' is correct
+#    driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: none  # Update schema; use 'none' if you're not auto-generating
+        format_sql: true
+        show_sql: true
+      properties:
+        hibernate:
+          multiTenancy: DATABASE  # Set multi-tenancy to use schemas
+#          multi_tenant_connection_provider: com.example.multitenantdemo.multitenancy.data.ConnectionProvider  # Reference the bean class
+#          tenant_identifier_resolver: com.example.multitenantdemo.multitenancy.data.DataTenantIdentifierResolver  # Reference the bean class
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+  database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  # Enable logging to see SQL and SQL formatting
+  logging:
+    level:
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql: TRACE
+
+
+
+
+multitenancy:
+  master:
+    datasource:
+      username: postgres
+      password: saif12345
+      url: jdbc:postgresql://localhost:5432/postgres  # Ensure 'localhost' is correct
+      driver-class-name: org.postgresql.Driver
+  tenants:
+    - identifier: tenant1.123
+      enabled: true
+      schema: tenant1  # Schema for tenant1.123
+      issuer: http://localhost:8080/realms/dukes
+    - identifier: tenant1.456
+      enabled: true
+      schema: tenant2  # Schema for tenant1.456
+      issuer: http://localhost:8080/realms/beans
+    - identifier: trixie
+      enabled: false
+      schema: tenant1  # Schema for the 'trixie' tenant (disabled in this case)
+      issuer: http://localhost:8080/realms/trixie
